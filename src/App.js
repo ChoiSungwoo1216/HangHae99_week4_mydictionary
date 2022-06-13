@@ -1,38 +1,55 @@
-import './App.css';
 import React from "react";
-import { Routes, Route } from "react-router-dom";
+import styled from "styled-components";
+import { Route, Switch } from "react-router-dom";
 
-//pages
-import Header from "./pages/Header"
-import Main from "./pages/Main"
-import Login from "./pages/Login"
-import SignUp from "./pages/SignUp"
-import Posting from "./pages/Posting"
-import Post from "./pages/Post"
-import PostEdit from "./pages/PostEdit"
+import { useDispatch } from "react-redux";
+import { loadWordFB} from "./redux/modules/word";
 
-//font-awesome
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { faPen, faHeart, faHouse, faPenToSquare, faTrashCan, faCommentDots } from '@fortawesome/free-solid-svg-icons'
-library.add(faHouse, faHeart, faPen, faPenToSquare, faTrashCan, faCommentDots);
+import WordList from "./WordList";
+import WordUpdate from "./WordUpdate";
+import WordAdd from "./WordAdd";
+import NotFound from "./NotFound";
+import Header from "./Header";
 
 
-
-// index는 추후 post_id로 교체해서 사용할 예정
 function App() {
+
+  const dispatch = useDispatch();
+
+  React.useEffect( () => {
+    dispatch(loadWordFB());
+  });
+
   return (
     <div className="App">
       <Header />
-      <Routes>
-        <Route path="/" element={<Main />}></Route>
-        <Route path="/login" element={<Login />}></Route>
-        <Route path="/signup" element={<SignUp />}></Route>
-        <Route path="/posting" element={<Posting />}></Route>
-        <Route path="/post/:postid" element={<Post />}></Route>
-        <Route path="/postedit/:postid" element={<PostEdit />}></Route>
-      </Routes>
+      <Container>
+        <Switch>
+          <Route path="/" exact>
+            <WordList />
+          </Route>
+          <Route path="/update/:index">
+            <WordUpdate />
+          </Route>
+          <Route path="/add/">
+            <WordAdd/>
+          </Route>
+          <Route>
+            <NotFound />
+          </Route>
+        </Switch>
+      </Container>
     </div>
   );
 }
+
+const Container = styled.div`
+  max-width: 100%;
+  height: 100%;
+  padding: 0 30px;
+  margin-top: 100px;
+  overflow: auto;
+`;
+
 
 export default App;
